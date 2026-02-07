@@ -1,22 +1,14 @@
 {
-  "name": "ECHO_OFF - Java Console Edition",
+  "name": "ECHO_OFF",
   "short_name": "ECHO_OFF",
-  "description": "Chat P2P 1:1 seguro estilo Java Console. Zero-trace, privacidad completa.",
-  "version": "2.9.0",
-  "lang": "es",
-  "start_url": "/ECHO_OFF/",
+  "description": "ECHO_OFF PWA - Secure Communications System",
+  "start_url": "./?v=20260207_01",
+  "scope": "./",
   "display": "standalone",
-  "scope": "/ECHO_OFF/",
-  "background_color": "#000000",
-  "theme_color": "#000080",
-  "orientation": "any",
+  "orientation": "portrait",
+  "background_color": "#e9e9e9",
+  "theme_color": "#e9e9e9",
   "icons": [
-    {
-      "src": "icon-app.png",
-      "sizes": "1024x1024",
-      "type": "image/png",
-      "purpose": "any maskable"
-    },
     {
       "src": "icon-192.png",
       "sizes": "192x192",
@@ -29,24 +21,5 @@
       "type": "image/png",
       "purpose": "any maskable"
     }
-  ],
-  "categories": ["communication", "social", "utilities", "security"],
-  "screenshots": [],
-  "shortcuts": [
-    {
-      "name": "Crear Nueva Sala",
-      "short_name": "Crear",
-      "description": "Iniciar una nueva sala de chat segura",
-      "url": "/?action=create",
-      "icons": []
-    },
-    {
-      "name": "Unirse a Sala",
-      "short_name": "Unirse",
-      "description": "Unirse a una sala de chat existente",
-      "url": "/?action=join",
-      "icons": []
-    }
-  ],
-  "prefer_related_applications": false
+  ]
 }
