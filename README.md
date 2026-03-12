@@ -1,79 +1,60 @@
 <div align="center">
-  <img src="icon-192.png" alt="Logotipo de ECHO_OFF" width="150" style="border-radius: 20px; box-shadow: 0 0 20px rgba(0, 132, 255, 0.4);">
+  <img src="icon-192.png" alt="ECHO_OFF Black Ops" width="160" style="border-radius: 30px; border: 3px solid #0084ff; box-shadow: 0 0 40px rgba(0, 132, 255, 0.6);">
 
-  # 🔮 **ECHO_OFF v3.5 "The Merlin Protocol"** 🔮
-  ### *Desaparece en la niebla. Deja que el sistema te olvide.*
+  # 🦅 **ECHO_OFF v4.0: EL PROTOCOLO "VIGÍA NEGRO"** 🦅
+  ### *Nivel de Acceso: CLASIFICADO - Sin Rastro Terrenal*
 
-  [![Estado: INDETECTABLE](https://img.shields.io/badge/Estado-INDETECTABLE-00C6FF.svg?style=for-the-badge&logo=appveyor)](https://prismalab-arm64.github.io/ECHO_OFF/)
-  [![Cifrado: EXTREMO A EXTREMO](https://img.shields.io/badge/Cifrado-E2EE-0084FF.svg?style=for-the-badge&logo=lock)](https://prismalab-arm64.github.io/ECHO_OFF/)
-  [![Conexión: PEER-TO-PEER](https://img.shields.io/badge/Red-P2P_Directa-31a24c.svg?style=for-the-badge&logo=webrtc)](https://prismalab-arm64.github.io/ECHO_OFF/)
-  [![Deploy: GITHUB PAGES](https://img.shields.io/badge/Lanzamiento-VIVO_AHORA-fa383e.svg?style=for-the-badge)](https://prismalab-arm64.github.io/ECHO_OFF/)
+  [![Seguridad: NIVEL AGENCIA](https://img.shields.io/badge/Seguridad-NIVEL_AGENCIA-000000.svg?style=for-the-badge&logo=cia&logoColor=white)](https://prismalab-arm64.github.io/ECHO_OFF/)
+  [![Cifrado: CUÁNTICO_VOLÁTIL](https://img.shields.io/badge/Cifrado-VOLÁTIL-ff0000.svg?style=for-the-badge&logo=shield)](https://prismalab-arm64.github.io/ECHO_OFF/)
+  [![Rastros: CERO_ABSOLUTO](https://img.shields.io/badge/Rastros-CERO_ABSOLUTO-31a24c.svg?style=for-the-badge&logo=ghost)](https://prismalab-arm64.github.io/ECHO_OFF/)
 </div>
 
 <br>
 
 <h2 align="center">
-  <a href="https://prismalab-arm64.github.io/ECHO_OFF/">🌌 ACCEDER A LA SALA DE CONTACTO (LIVE APP) 🌌</a>
+  <a href="https://prismalab-arm64.github.io/ECHO_OFF/">⚡ INICIAR TRANSMISIÓN SEGURA ⚡</a>
 </h2>
 
 ---
 
-> *"Al igual que el polvo de las estrellas o las cenizas de la pólvora, tus palabras nacen, brillan en la pantalla, y se esparcen en el éter al segundo siguiente. No hay eco. No hay rastro. No hay nadie vigilando."*  
-> — *El Arquitecto del Lab.*
+## 🛰️ PROTOCOLO DE EXTRACCIÓN DE DATOS (NIVEL NASA)
 
-## 👁️ EL MANIFIESTO DE LAS SOMBRAS
+**ECHO_OFF v4.0** ha sido rediseñado para operar en las sombras del metaverso. Hemos clausurado los puntos ciegos que permitían la fuga de inteligencia mediante hardware comercial. 
 
-Sean bienvenidos a la **era del cero-rastro**. En un mundo donde todo es almacenado, catalogado y utilizado en tu contra, **ECHO_OFF** no es una aplicación tradicional. Es un conducto P2P subterráneo, una conexión invisible forjada puramente en los navegadores de dos entidades anónimas.  
-
-No usamos granjas de servidores. No tenemos bases de datos SQL sedientas de tus textos. Funciona bajo la premisa absoluta de **cifrado oscuro y conectividad volátil**. 
-
----
-
-## 🛠️ INGENIERÍA 4.0: EL NÚCLEO
-
-El sistema utiliza las más sofisticadas técnicas de WebRTC envueltas en la biblioteca P2P, saltando cortafuegos a través de nodos STUN distribuidos de Google. 
-
-🔹 **Interconexión Tácita (Auto-Accept Protocol):** He liberado a la bestia de las ataduras anticuadas del DOM y la red. Ya no se sufren bloqueos de los módulos de seguridad de iOS/Android que detienen conexiones en segundo plano (Condiciones de Carrera aniquiladas). Si tienes la llave única, **estás dentro.**
-
-🔹 **Anti-Caché Inmortal:** Hemos inyectado versiones `vFINAL_NO_MERCY` en nuestro Service Worker (`sw.js`). Si el Laboratorio sube un parche, las versiones obsoletas en los navegadores del mundo son forzadas a autodestruirse al contacto. La sincronía es perfecta.
-
-🔹 **Arquitectura Monocromática Fluida:** Hemos migrado todo de un oscuro "DOS-Matrix" a una limpia y soberbia interfaz que rivalizaría visualmente con Meta, utilizando tonos HSL y glassmorphism puro. El camuflaje perfecto para operar a plena luz del día.
+### 🛡️ BLINDAJE MULTIMEDIA REFORZADO
+*   **Audio "Black Box":** Los reproductores nativos con menús de descarga han sido incinerados. Hemos inyectado un motor de audio propietario que bloquea la API de guardado de Chrome/Safari. Si se escucha, es solo para tus oídos, una sola vez.
+*   **Óptica Blindada:** Las imágenes ahora se materializan en burbujas de vidrio aisladas. Se han anulado los vectores de "Arrastrar y Soltar" y los menús contextuales de guardado de imagen. La luz informativa brilla y se apaga.
+*   **Cero Persistencia en Disco:** Nada toca el SSD/Flash. Todo vive en la memoria RAM volátil, lista para ser purgada.
 
 ---
 
-## 🛡️ DEFENSA CONTRA LAS ARTES OSCURAS (SEGURIDAD)
+## 💥 SECUENCIA DE DESINTEGRACIÓN "GLITCH"
 
-No basta con ser invisible en la red; debes ser intocable en la pantalla física:
-
-*   🔒 **Destrucción Volátil (Cronómetro Zero):** Los mensajes en tu pantalla son un espejismo. Al emitir tu próxima respuesta, el historial previo de tu interlocutor es purgado de la memoria VRAM simultáneamente. 
-*   🔒 **Escudo Cortafuego Copia/Corte:** Tu terminal desactiva a nivel kernel del navegador las API's del portapapeles. `Ctrl+C` está muerto. El menú contextual derecho ha sido borrado del plano del DOM. 
-*   🔒 **Alerta del Vigía (Anti-Screenshot):** Si un tercer agente desenfoca la ventana para robar información secreta usando Recortes, el Laboratorio detecta el cambio de estado de visibilidad instantáneamente.
-*   🔒 **Secuencia de Evacuación (Triple ESC):** Aborta misión inmediatamente oprimendo `ESC` tres veces. Esto borra la instancia del Peer, pulveriza el HTML de tu pantalla e inyecta una redirección instantánea forzosa.
+No más borrados simples. Hemos implementado el **Efecto de Desintegración por Glitch**.
+Al emitir una respuesta, la información anterior no solo desaparece; sufre un colapso de fase visual: la burbuja se fractura, se desenfoca y se disuelve en el éter digital para evitar la lectura residual por parte de terceros cercanos.
 
 ---
 
-## ⚡ ¿CÓMO CRUZAR EL PORTAL? (INSTRUCCIONES)
+## 🕵️‍♂️ PUNTO DE VISTA DE INTELIGENCIA (SEGURIDAD)
 
-### 1. El Anfitrión (The Host)
-1. Navega a **[https://prismalab-arm64.github.io/ECHO_OFF/](https://prismalab-arm64.github.io/ECHO_OFF/)**.
-2. Presiona **"Nueva Conversación"**.
-3. El sistema invocará un conjuro matemático y generará el *"Cripto-Token"* único (ej. `ECHO_MMNV4YVD11D`).
-4. Entrégale esta llave a tu invitado por un medio externo seguro. No cierres la ventana.
+> *"En la guerra de la información, el rastro es una sentencia de muerte. ECHO_OFF no es un chat; es un apretón de manos en el vacío."*
 
-### 2. El Invitado (The Guest)
-1. Navega a **[https://prismalab-arm64.github.io/ECHO_OFF/](https://prismalab-arm64.github.io/ECHO_OFF/)**.
-2. Presiona **"Unirse con Enlace"**.
-3. Ingresa la llave otorgada por el Anfitrión.
-4. Presiona conectar. La **Autorización Tácita** quebrará cualquier barrera de red entre continentes y unirá los ecosistemas instantáneamente.
+### CARACTERÍSTICAS DE GRADO MILITAR:
+1.  **Descifrado dinámico Matrix:** Cada paquete entrante se somete a una secuencia de computación visual antes de materializarse.
+2.  **Autorización Tácita Inmóvil:** Sin diálogos de confirmación que los navegadores puedan bloquear. La llave es el destino.
+3.  **Triple Escudo de Salida:** `ESC` tres veces limpia la terminal, borra la identidad P2P y te teletransporta a un sitio señuelo (Google).
+4.  **Anti-Forense:** Bloqueo de selección de texto y guardado forzado a nivel kernel-web.
 
 ---
 
-## 🧬 DETALLES CLÍNICOS Y TRANSFERENCIAS (Payloads)
+## ⚡ ¿CÓMO OPERAR? (GUIÁ RÁPIDA)
 
-*   **Voz (Canal Analógico):** Grabación asíncrona WebM comprimiendo tus palabras en BLOB y transmitiéndolas a través del mismo puente WebRTC sin pasar por servidores HTTP convencionales.
-*   **Archivos (Payloads Locales):** Transforma cualquier documento hasta de 20MB en una cadena codificada base64 que viaja al vuelo. Si envías la información clasificada, viaja de nodo a nodo.
+1. **Host:** Genera Token, entrega por canal seguro.
+2. **Guest:** Inserta Token, pulsa Conectar.
+3. **Misión:** Transmitir. Al responder, la historia previa colapsa.
+4. **Abortar:** Triple `ESC` para limpieza total de memoria.
 
 ---
-
-### *Desarrollado en las instalaciones PrismaLab-arm64 bajo el protocolo avanzado.*
-*"Lo que sucede en ECHO_OFF, ni siquiera queda en ECHO_OFF."*
+<div align="center">
+  *Propiedad Clasificada de PrismaLab-arm64. Cualquier rastro de este software es un error del usuario.*
+</div>

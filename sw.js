@@ -10,7 +10,7 @@
 'use strict';
 
 // 🔁 CAMBIA ESTO cada vez que subas cambios importantes de UI
-const SW_VERSION = 'echo_off_sw_2026-03-12_vFINAL_NO_MERCY';
+const SW_VERSION = 'echo_off_sw_2026-03-12_vDELTA_FORCE_V1';
 
 // Nombres de caché versionados
 const CACHE_STATIC = `${SW_VERSION}::static`;
@@ -21,7 +21,7 @@ const APP_SHELL = [
   './',
   './index.html',
   './style.css',
-  './echo-secure.js',
+  './delta-v4.js',
   './peerjs.min.js',
   './manifest.json',
   './icon-192.png',

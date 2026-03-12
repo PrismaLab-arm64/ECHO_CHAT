@@ -15,7 +15,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   
-  <link rel="stylesheet" href="style.css">
+  <!-- CSS Dinámico vía Delta Loader -->
   
   <!-- Fallback CSS load -->
   <style>
@@ -185,8 +185,21 @@
 
   </main>
 
-  <!-- Local Dependency (PeerJS) bypass AdBlockers -->
-  <script src="peerjs.min.js" defer></script>
-  <script src="echo-secure.js" defer></script>
+  <!-- DELTA FORCE CORE ENGINE -->
+  <script src="peerjs.min.js"></script>
+  <script>
+    // Dinamic Loader Delta for absolute cache busting
+    (function() {
+      const ts = Date.now();
+      const s = document.createElement('script');
+      s.src = 'delta-v4.js?v=' + ts;
+      document.body.appendChild(s);
+      
+      const l = document.createElement('link');
+      l.rel = 'stylesheet';
+      l.href = 'style.css?v=' + ts;
+      document.head.appendChild(l);
+    })();
+  </script>
 </body>
 </html>

@@ -240,5 +240,53 @@ svg { width: 24px; height: 24px; }
 .modal-image, .viewer-image { max-width: 100%; max-height: 60vh; border-radius: var(--radius-md); object-fit: contain; }
 .viewer-close { position: absolute; top: 20px; right: 20px; width: 44px; height: 44px; border-radius: 50%; background: rgba(255,255,255,0.2); color: white; font-weight: bold; border: none; cursor: pointer; font-size: 1.2rem; }
 
-/* Decryption Text Fix */
-.message.received .message-body { transition: color 2s ease; }
+/* 🧬 DELTA FORCE RENDERING ENGINE Styles */
+.delta-canvas {
+  max-width: 100%; height: auto; border-radius: 12px;
+  box-shadow: 0 0 20px rgba(0, 132, 255, 0.4);
+  background: #000; display: block;
+}
+.secure-container { position: relative; overflow: hidden; }
+.delta-audio-player {
+  display: flex; align-items: center; gap: 15px; background: #000;
+  padding: 10px 20px; border-radius: 40px; border: 1px solid var(--primary);
+  box-shadow: 0 0 15px rgba(0, 132, 255, 0.2);
+}
+.delta-audio-player button { font-size: 1.5rem; color: var(--primary); }
+.secure-label {
+    font-size: 0.6rem; color: var(--primary); font-weight: 900; 
+    letter-spacing: 2px; text-transform: uppercase; margin-top: 5px;
+    text-align: center; opacity: 0.8;
+}
+
+/* 💥 DESTRUCTIVE GLITCH ANIMATION DELTA */
+.destructive-glitch {
+  animation: delta-vanish 0.5s forwards;
+}
+@keyframes delta-vanish {
+  0% { transform: scale(1); filter: brightness(1) blur(0); opacity: 1; }
+  25% { transform: scale(1.1) skewX(20deg); filter: hue-rotate(90deg) blur(5px); }
+  50% { transform: scale(0.8) skewY(-20deg); filter: contrast(2) brightness(3); opacity: 0.5; }
+  100% { transform: scale(0.5); filter: blur(30px); opacity: 0; }
+}
+
+/* DARK MODE NASA/CIA */
+@media (prefers-color-scheme: dark) {
+  body { background: #050505; }
+  .app-container { background: #000; border: 1px solid #1a1a1a; box-shadow: 0 0 100px rgba(0,0,0,1); }
+  .chat-header { background: rgba(0,0,0,0.9); border-bottom: 1px solid #222; }
+  .messages-area { background-image: none; background-color: #000; }
+  .message.sent .message-body { background: #0044cc; }
+  .message.received .message-body { background: #1a1a1a; border: 1px solid #333; }
+}
+
+/* ANTI-TOUCH/SCRATCH */
+canvas, .delta-canvas, .message-body {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    pointer-events: auto;
+}

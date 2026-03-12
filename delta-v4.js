@@ -1,6 +1,6 @@
 /* =============================================
-   ECHO CHAT - Minimalist Core Logic 
-   Version: 3.1.0 (Safety/Compatibility Patch)
+   ECHO CHAT - PROTOCOLO DELTA v4.0
+   NIVEL: CLASIFICADO (FUERZA DELTA)
    ============================================= */
 
 let peer = null;
@@ -45,29 +45,36 @@ let mediaRecorder = null;
 let audioChunks = [];
 let isRecording = false;
 
+// Security Log
+function logDelta(msg) {
+  console.log(`%c[DELTA-COREV4] ${msg}`, "color: #00ff00; font-weight: bold; background: #000; padding: 2px 5px;");
+}
+
 /* =============================================
    INITIALIZATION
    ============================================= */
 document.addEventListener('DOMContentLoaded', () => {
+  logDelta("Iniciando Protocolo Delta...");
   try {
     setupEventListeners();
     initSplashScreen();
     initSecurity();
+    // Cache bust check
+    if (!window.location.search.includes('v=')) {
+        window.location.search = '?v=' + Date.now();
+    }
   } catch (err) {
-    alert("Error de Inicio Crítico (posible browser antiguo): " + err.message);
+    logDelta("ERROR CRÍTICO: " + err.message);
   }
 });
 
 function initSplashScreen() {
   setTimeout(() => {
     if (screens.splash) screens.splash.classList.remove('active');
-    
-    // Explicitly unhide terminal using standard display mechanics
     if (screens.terminal) {
       screens.terminal.classList.remove('hidden');
       screens.terminal.style.display = 'flex';
     }
-    
     showScreen(screens.welcome);
   }, 1500);
 }
@@ -102,7 +109,7 @@ function setupEventListeners() {
     UI.btnCopyId.addEventListener('click', () => {
       if (UI.roomIdInput && navigator.clipboard) {
         navigator.clipboard.writeText(UI.roomIdInput.value).then(() => {
-          systemAlert('Enlace Copiado', 'success');
+          logDelta("ID Copiado al portapapeles táctico.");
         });
       }
     });
@@ -138,7 +145,6 @@ function setupEventListeners() {
   }
   if (UI.fileInput) UI.fileInput.addEventListener('change', handleFileUpload);
   
-  // Voice Recording
   if (UI.btnRecord) {
     UI.btnRecord.addEventListener('mousedown', startVoiceRecording);
     UI.btnRecord.addEventListener('mouseup', stopVoiceRecording);
@@ -160,7 +166,7 @@ function showScreen(screen) {
 function generateUniqueId() {
   const rs = crypto.getRandomValues(new Uint32Array(2));
   const t = Date.now().toString(36);
-  return `ECHO_${t}${rs[0].toString(36)}${rs[1].toString(36)}`.toUpperCase().substring(0, 16);
+  return `ECHO_${t}${rs[0].toString(36)}`.toUpperCase().substring(0, 16);
 }
 
 function initPeerOptions() {
@@ -173,83 +179,65 @@ function initPeerOptions() {
 function createRoom() {
   showScreen(screens.createRoom);
   myPeerId = generateUniqueId();
-  if (UI.roomIdInput) UI.roomIdInput.value = "Generando...";
+  if (UI.roomIdInput) UI.roomIdInput.value = "CALIBRANDO...";
   
   if (peer) peer.destroy();
-
   peer = new Peer(myPeerId, initPeerOptions());
   
   peer.on('open', (id) => {
-    console.log('[DEBUG] Peer open on HOST. Assigned ID:', id);
     isHost = true;
     if (UI.roomIdInput) UI.roomIdInput.value = id;
-    updateStatus('ESPERANDO CONEXIÓN...', 'warning');
+    updateStatus('MODO VIGÍA ACTIVO', 'warning');
   });
 
   peer.on('connection', (conn) => {
-    console.log('[DEBUG] Incoming connection event from peer:', conn.peer);
-    if (currentConnection && currentConnection.open) {
-      conn.close(); return;
-    }
-    // Auto-aceptar la conexión (El ID largo randomizado ya funge como autenticación)
+    if (currentConnection && currentConnection.open) { conn.close(); return; }
     setupConnection(conn);
-  });
-
-  peer.on('error', (err) => {
-    console.error('[DEBUG] Peer hosting error:', err);
-    systemAlert('Error al crear sala.', 'error');
   });
 }
 
 function connectToPeer() {
   const targetId = UI.peerIdInput ? UI.peerIdInput.value.trim().toUpperCase() : '';
-  if (!targetId || !targetId.startsWith('ECHO_')) return systemAlert('ID inválido.', 'error');
+  if (!targetId || !targetId.startsWith('ECHO_')) return;
 
   myPeerId = generateUniqueId();
+  if (peer) peer.destroy();
   peer = new Peer(myPeerId, initPeerOptions());
   
   peer.on('open', () => {
-    console.log('[DEBUG] Peer open on CLIENT. Attempting connection to target:', targetId);
-    updateStatus('CONECTANDO...', 'warning');
+    updateStatus('ENLAZANDO...', 'warning');
     const conn = peer.connect(targetId, { reliable: true });
     setupConnection(conn);
   });
 
-  peer.on('error', (err) => {
-    console.error('[DEBUG] Peer connecting error:', err);
-    systemAlert('No se pudo conectar al peer.', 'error');
-  });
+  peer.on('error', (err) => logDelta("Error de enlace: " + err.type));
 }
 
 function setupConnection(conn) {
-  console.log('[DEBUG] Setting up local connection object for:', conn.peer);
   currentConnection = conn;
   
   const handleOpen = () => {
-    console.log('[DEBUG] Connection formally OPENED dynamically with:', conn.peer);
     showScreen(screens.chat);
-    if (UI.chatPeerId) UI.chatPeerId.textContent = isHost ? conn.peer : conn.peer;
-    updateStatus('EN LÍNEA', 'success');
+    if (UI.chatPeerId) UI.chatPeerId.textContent = conn.peer;
+    updateStatus('OPERATIVO', 'success');
+    logDelta("Enlace establecido con: " + conn.peer);
   };
 
-  if (conn.open) {
-    handleOpen();
-  } else {
-    conn.on('open', handleOpen);
-  }
+  if (conn.open) handleOpen();
+  else conn.on('open', handleOpen);
 
   conn.on('data', (data) => {
     try {
       const parsed = JSON.parse(data);
       if (parsed.type === 'HEARTBEAT') return;
-      if (parsed.type === 'FILE') handleIncomingFile(parsed);
-      else if (parsed.type === 'VOICE') handleIncomingVoice(parsed);
-      else handleIncomingText(parsed);
+      if (parsed.type === 'FILE' || parsed.type === 'VIDEO') renderSecureMedia(parsed);
+      else if (parsed.type === 'VOICE') renderSecureVoice(parsed);
+      else handleIncomingText(parsed.text);
     } catch (e) { handleIncomingText(data); }
   });
 
   conn.on('close', () => {
-    systemAlert('El contacto se ha desconectado.', 'error');
+    logDelta("Conexión perdida.");
     disconnect();
   });
 }
@@ -259,7 +247,7 @@ function disconnect() {
   currentConnection = null;
   destroyPeer();
   showScreen(screens.welcome);
-  updateStatus('OFFLINE', 'error');
+  updateStatus('DESCONECTADO', 'error');
   if (UI.messagesContainer) UI.messagesContainer.innerHTML = '';
   activeMessages = [];
 }
@@ -268,7 +256,6 @@ function destroyPeer() {
   if (peer) peer.destroy();
   peer = null;
   isHost = false;
-  myPeerId = null;
 }
 
 function updateStatus(text, type) {
@@ -278,18 +265,19 @@ function updateStatus(text, type) {
   }
 }
 
-function systemAlert(msg, type='info') {
-  alert(msg);
-}
-
 /* =============================================
-   MESSAGING LOGIC
+   SECURE MESSAGING & RENDERING (CANVAS/WEB AUDIO)
    ============================================= */
+
 function sendMessage() {
   const text = UI.messageInput ? UI.messageInput.value.trim() : '';
   if (!text || !currentConnection || !currentConnection.open) return;
 
-  activeMessages.forEach(el => el.remove());
+  // Destrucción animada
+  activeMessages.forEach(el => {
+    el.classList.add('destructive-glitch');
+    setTimeout(() => el.remove(), 400);
+  });
   activeMessages = [];
 
   const msgPayload = { type: 'TEXT', text };
@@ -303,25 +291,43 @@ function sendMessage() {
   if (UI.btnSend) UI.btnSend.classList.add('hidden');
 }
 
-function handleIncomingText(data) {
-  const text = typeof data === 'object' ? data.text : data;
+function handleIncomingText(text) {
   appendMessage(text, 'received');
 }
 
 function appendMessage(text, type) {
   const div = document.createElement('div');
   div.className = `message ${type}`;
-  
   const body = document.createElement('div');
   body.className = 'message-body';
-  body.textContent = text;
   
-  const timer = document.createElement('span');
-  timer.className = 'message-countdown';
-  timer.textContent = 'Destrucción al responder';
-  body.appendChild(timer);
-
+  if (type === 'received') {
+    let originalText = text;
+    let cycles = 0;
+    body.textContent = '???';
+    let interval = setInterval(() => {
+      cycles++;
+      let chars = '01#X$%&@*';
+      body.textContent = originalText.split('').map((char, index) => {
+        if (char === ' ') return ' ';
+        if (index < cycles / 4) return originalText[index];
+        return chars[Math.floor(Math.random() * chars.length)];
+      }).join('');
+      if (cycles > originalText.length * 4) {
+        clearInterval(interval);
+        body.textContent = originalText;
+      }
+    }, 15);
+  } else {
+    body.textContent = text;
+  }
+  
+  const countdown = document.createElement('span');
+  countdown.className = 'message-countdown';
+  countdown.textContent = 'PURGA ACTIVA';
+  body.appendChild(countdown);
   div.appendChild(body);
+  
   if (UI.messagesContainer) {
     UI.messagesContainer.appendChild(div);
     UI.messagesContainer.scrollTop = UI.messagesContainer.scrollHeight;
@@ -329,43 +335,105 @@ function appendMessage(text, type) {
   activeMessages.push(div);
 }
 
-/* =============================================
-   FILE & VOICE TRANSFERS
-   ============================================= */
+// FORCE DELTA: RENDERIZADO EN CANVAS (SIN TAGS IMG)
+function renderSecureMedia(payload) {
+    const isVideo = payload.type === 'VIDEO';
+    const div = document.createElement('div');
+    div.className = `message received secure-media`;
+    
+    const body = document.createElement('div');
+    body.className = 'message-body secure-container';
+    
+    const canvas = document.createElement('canvas');
+    canvas.className = 'delta-canvas';
+    canvas.oncontextmenu = (e) => e.preventDefault();
+    
+    const ctx = canvas.getContext('2d');
+    const media = isVideo ? document.createElement('video') : new Image();
+    media.src = payload.data;
+    
+    if (!isVideo) {
+        media.onload = () => {
+            canvas.width = media.width;
+            canvas.height = media.height;
+            ctx.drawImage(media, 0, 0);
+            logDelta("Imagen materializada en Canvas Aislado.");
+        };
+    } else {
+        media.onloadedmetadata = () => {
+            canvas.width = media.videoWidth;
+            canvas.height = media.videoHeight;
+            media.play();
+            const drawFrame = () => {
+                if (!media.paused && !media.ended) {
+                    ctx.drawImage(media, 0, 0);
+                    requestAnimationFrame(drawFrame);
+                }
+            };
+            drawFrame();
+        };
+    }
+
+    body.appendChild(canvas);
+    const label = document.createElement('div');
+    label.className = 'secure-label';
+    label.textContent = isVideo ? 'VÍDEO TEMPORAL' : 'IMAGEN TEMPORAL';
+    body.appendChild(label);
+    
+    div.appendChild(body);
+    if (UI.messagesContainer) {
+        UI.messagesContainer.appendChild(div);
+        UI.messagesContainer.scrollTop = UI.messagesContainer.scrollHeight;
+    }
+    activeMessages.push(div);
+}
+
+// FORCE DELTA: WEB AUDIO API (SIN TAG AUDIO NATIVO)
+function renderSecureVoice(payload) {
+    const div = document.createElement('div');
+    div.className = `message received secure-media`;
+    const body = document.createElement('div');
+    body.className = 'message-body';
+    
+    const player = document.createElement('div');
+    player.className = 'delta-audio-player';
+    
+    const playBtn = document.createElement('button');
+    playBtn.textContent = '🔊';
+    playBtn.onclick = () => {
+        const audio = new Audio(payload.data);
+        audio.play();
+        playBtn.textContent = '📻';
+        audio.onended = () => playBtn.textContent = '🔊';
+    };
+    
+    player.appendChild(playBtn);
+    const label = document.createElement('div');
+    label.className = 'secure-label';
+    label.textContent = 'AUDIO BLINDADO';
+    player.appendChild(label);
+    
+    body.appendChild(player);
+    div.appendChild(body);
+    if (UI.messagesContainer) {
+        UI.messagesContainer.appendChild(div);
+        UI.messagesContainer.scrollTop = UI.messagesContainer.scrollHeight;
+    }
+    activeMessages.push(div);
+}
+
 function handleFileUpload(e) {
   const file = e.target.files[0];
   if (!file || !currentConnection || !currentConnection.open) return;
-  if (file.size > 20 * 1024 * 1024) return systemAlert('Archivo demasiado grande (max 20MB)');
-
+  
+  const isVideo = file.type.startsWith('video/');
   const reader = new FileReader();
   reader.onload = (ev) => {
-    currentConnection.send(JSON.stringify({
-      type: 'FILE', name: file.name, data: ev.target.result
-    }));
-    systemAlert('Archivo enviado', 'success');
+    const payload = { type: isVideo ? 'VIDEO' : 'FILE', data: ev.target.result, name: file.name };
+    currentConnection.send(JSON.stringify(payload));
+    renderSecureMedia(payload);
   };
   reader.readAsDataURL(file);
-}
-
-function handleIncomingFile(payload) {
-  const name = payload.name;
-  const data = payload.data;
-  const div = document.createElement('div');
-  div.className = 'message received file-message';
-  div.innerHTML = `
-    <div class="message-body">
-      <div class="file-download">
-        <span class="file-icon">📎</span>
-        <span class="file-name">${name}</span>
-        <a href="${data}" download="${name}" class="file-download-btn">Guardar</a>
-      </div>
-    </div>
-  `;
-  if (UI.messagesContainer) {
-    UI.messagesContainer.appendChild(div);
-    UI.messagesContainer.scrollTop = UI.messagesContainer.scrollHeight;
-  }
-  activeMessages.push(div);
 }
 
 async function startVoiceRecording() {
@@ -380,101 +448,26 @@ async function startVoiceRecording() {
       const reader = new FileReader();
       reader.onload = () => {
         currentConnection.send(JSON.stringify({ type: 'VOICE', data: reader.result }));
-        handleIncomingVoice({ data: reader.result }, true);
+        renderSecureVoice({ data: reader.result });
       };
       reader.readAsDataURL(blob);
       stream.getTracks().forEach(t => t.stop());
     };
     mediaRecorder.start();
     isRecording = true;
-    if (UI.btnRecord) UI.btnRecord.style.backgroundColor = 'var(--danger)';
-  } catch(e) {
-    console.warn("Audio error: ", e);
-  }
+  } catch(e) { logDelta("Mic Error."); }
 }
 
 function stopVoiceRecording() {
-  if (!isRecording) return;
-  if (mediaRecorder) mediaRecorder.stop();
+  if (isRecording && mediaRecorder) mediaRecorder.stop();
   isRecording = false;
-  if (UI.btnRecord) UI.btnRecord.style.backgroundColor = 'var(--primary)';
 }
 
-function handleIncomingVoice(payload, isSent=false) {
-  const data = payload.data;
-  const div = document.createElement('div');
-  div.className = `message voice-message ${isSent ? 'sent':'received'}`;
-  div.innerHTML = `
-    <div class="message-body">
-      <audio controls src="${data}"></audio>
-    </div>
-  `;
-  if (UI.messagesContainer) {
-    UI.messagesContainer.appendChild(div);
-    UI.messagesContainer.scrollTop = UI.messagesContainer.scrollHeight;
-  }
-  if (!isSent) activeMessages.push(div);
-}
-
-/* =============================================
-   SECURITY
-   ============================================= */
 function initSecurity() {
-  setInterval(() => {
-    if (currentConnection && currentConnection.open) {
-      currentConnection.send(JSON.stringify({ type: 'HEARTBEAT' }));
-    }
-  }, 10000);
-
-  // Panic button
-  let escCount = 0;
-  let escTimer = null;
-  document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape') {
-      escCount++;
-      clearTimeout(escTimer);
-      escTimer = setTimeout(() => { escCount = 0; }, 2000);
-      if (escCount === 3) {
-        document.body.innerHTML = '';
-        window.location.href = 'https://google.com';
-      }
-    }
-  });
-
+  document.body.oncontextmenu = (e) => e.preventDefault();
   document.body.style.userSelect = 'none';
-  document.body.style.webkitUserSelect = 'none';
-  
-  function isEditable(t) {
-    if (!t) return false;
-    const tag = (t.tagName || '').toLowerCase();
-    return (tag === 'input' || tag === 'textarea' || t.isContentEditable);
-  }
-
-  document.addEventListener('copy', (e) => {
-    if(!isEditable(e.target)) e.preventDefault();
-  });
-  document.addEventListener('cut', (e) => {
-    if(!isEditable(e.target)) e.preventDefault();
-  });
-  document.addEventListener('contextmenu', (e) => {
-    if(!isEditable(e.target)) e.preventDefault();
-  });
-
   document.addEventListener('keydown', (e) => {
-    if (isEditable(e.target)) return;
-    if ((e.ctrlKey || e.metaKey) && ['c','x','a','p','s'].includes(e.key.toLowerCase())) {
-      e.preventDefault();
-    }
-  });
-
-  let focusLostCount = 0;
-  document.addEventListener('visibilitychange', () => {
-    if (document.hidden && currentConnection) {
-      focusLostCount++;
-      if (focusLostCount >= 3) {
-        systemAlert('⚠ Advertencia: Posible intento de captura de pantalla o desenfoque detectado.');
-        focusLostCount = 0;
-      }
-    }
+    if ((e.ctrlKey || e.metaKey) && ['c','s','p','u','i'].includes(e.key.toLowerCase())) e.preventDefault();
+    if (e.key === 'F12') e.preventDefault();
   });
 }
