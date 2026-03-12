@@ -1,4 +1,3 @@
-[README.md](https://github.com/user-attachments/files/25942846/README.md)
 # 🔐 Echo Chat PWA - Minimalist & Secure
 
 ![Version](https://img.shields.io/badge/version-3.0.0--Modern-0084ff?style=for-the-badge)

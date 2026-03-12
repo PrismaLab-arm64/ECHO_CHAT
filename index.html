@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Echo Chat</title>
+  <meta name="description" content="Secure Minimalist Personal Chat">
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#ffffff">
+  <link rel="icon" type="image/png" href="icon-192.png">
+  <link rel="apple-touch-icon" href="icon-192.png">
+
+  <!-- Google Fonts: Inter for modern, clean look -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="style.css">
+  
+  <!-- Fallback CSS load -->
+  <style>
+    body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background-color: #f0f2f5; margin: 0; padding: 0; height: 100vh; overflow: hidden; display: flex; flex-direction: column; }
+    .hidden { display: none !important; }
+  </style>
+</head>
+<body>
+  <!-- Install Prompt (Hidden by default) -->
+  <div id="install-prompt" class="hidden install-banner">
+    <div class="install-info">
+      <span>Instala la app para mejor experiencia</span>
+    </div>
+    <div class="install-actions">
+      <button id="btn-cancel-install" class="btn-text">Ahora No</button>
+      <button id="btn-install" class="btn-primary-small">Instalar</button>
+    </div>
+  </div>
+
+  <!-- Splash Screen Loader -->
+  <div id="splash-screen" class="splash-screen active">
+    <div class="logo-container">
+      <img src="icon-192.png" alt="Echo Chat" class="splash-logo">
+      <h1 class="splash-title">Echo</h1>
+      <p class="splash-subtitle">Cifrado de Extremo a Extremo</p>
+    </div>
+    <div class="spinner"></div>
+  </div>
+
+  <!-- Main App Container -->
+  <main id="terminal" class="app-container hidden">
+
+    <!-- Screen: Welcome (Login/Home) -->
+    <section id="welcome-screen" class="screen view-box">
+      <div class="welcome-header">
+        <div class="app-branding">
+          <img src="icon-192.png" alt="Echo Chat Logo" class="brand-logo">
+          <h2>Echo Chat</h2>
+        </div>
+        <p class="branding-msg">Mensajería privada y segura.</p>
+      </div>
+      
+      <div class="welcome-actions">
+        <button id="btn-create-room" class="btn-primary btn-large">
+          <svg viewBox="0 0 24 24" class="btn-icon"><path fill="currentColor" d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
+          Nueva Conversación
+        </button>
+        <button id="btn-join-room" class="btn-secondary btn-large">
+          <svg viewBox="0 0 24 24" class="btn-icon"><path fill="currentColor" d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
+          Unirse con Enlace
+        </button>
+      </div>
+
+      <div class="welcome-footer">
+        <span id="status" class="status-badge">● OFFLINE</span>
+      </div>
+    </section>
+
+    <!-- Screen: Create Room -->
+    <section id="create-room-screen" class="screen view-box hidden">
+      <div class="header-nav">
+        <button id="btn-back-from-create" class="btn-icon-only" aria-label="Volver">
+          <svg viewBox="0 0 24 24"><path fill="currentColor" d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg>
+        </button>
+        <h3>Crear Sala</h3>
+        <div class="spacer"></div>
+      </div>
+
+      <div class="card-content">
+        <div class="invite-graphic">
+          <div class="pulse-ring"></div>
+          <svg viewBox="0 0 24 24" class="icon-large"><path fill="currentColor" d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92 1.61 0 2.92-1.31 2.92-2.92s-1.31-2.92-2.92-2.92z"/></svg>
+        </div>
+        <p class="description">Comparte este código con la persona con la que deseas conectar. La conexión es directa y privada.</p>
+        
+        <div class="input-group">
+          <input type="text" id="room-id" readonly class="code-input" />
+          <button id="btn-copy-id" class="btn-ghost" title="Copiar ID">
+            <svg viewBox="0 0 24 24"><path fill="currentColor" d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>
+          </button>
+        </div>
+
+        <button id="btn-regenerate-id" class="btn-text" style="margin-top:20px;">
+          <svg viewBox="0 0 24 24" width="18" style="vertical-align:middle; margin-right:5px;"><path fill="currentColor" d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/></svg>
+          Generar Nuevo Código
+        </button>
+      </div>
+    </section>
+
+    <!-- Screen: Join Room -->
+    <section id="join-room-screen" class="screen view-box hidden">
+      <div class="header-nav">
+        <button id="btn-back-from-join" class="btn-icon-only" aria-label="Volver">
+          <svg viewBox="0 0 24 24"><path fill="currentColor" d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg>
+        </button>
+        <h3>Unirse</h3>
+        <div class="spacer"></div>
+      </div>
+
+      <div class="card-content">
+        <div class="invite-graphic">
+          <svg viewBox="0 0 24 24" class="icon-large"><path fill="currentColor" d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+        </div>
+        <p class="description">Ingresa el código de invitación o enlace que te han proporcionado.</p>
+        
+        <div class="input-group">
+          <input type="text" id="peer-id-input" placeholder="Ej: ECHO_ABC123..." class="text-input" autocomplete="off" />
+        </div>
+        
+        <button id="btn-connect" class="btn-primary btn-large" style="margin-top: 25px;">
+          Conectar
+        </button>
+      </div>
+    </section>
+
+    <!-- Screen: Chat Workspace -->
+    <section id="chat-screen" class="screen chat-layout hidden">
+      <header class="chat-header">
+        <div class="chat-profile">
+          <div class="avatar">
+             <svg viewBox="0 0 24 24"><path fill="currentColor" d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+          </div>
+          <div class="chat-info">
+            <h3 id="chat-peer-id" class="chat-name">Contacto</h3>
+            <span class="chat-status online">En línea • Cifrado activo</span>
+          </div>
+        </div>
+        <div class="chat-actions">
+           <!-- Hidden but kept to not break app.js -->
+           <div id="sas-display" style="display:none;"></div>
+           <button id="btn-disconnect" class="btn-icon-only text-danger" title="Cerrar Chat">
+             <svg viewBox="0 0 24 24"><path fill="currentColor" d="M12 2C6.47 2 2 6.47 2 12s4.47 10 10 10 10-4.47 10-10S17.53 2 12 2zm5 13.59L15.59 17 12 13.41 8.41 17 7 15.59 10.59 12 7 8.41 8.41 7 12 10.59 15.59 7 17 8.41 13.41 12 17 15.59z"/></svg>
+           </button>
+        </div>
+      </header>
+
+      <div id="messages-container" class="messages-area">
+         <!-- Mensajes se inyectarán aquí -->
+         <div class="encryption-notice">
+            <svg viewBox="0 0 24 24" width="16"><path fill="currentColor" d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zM9 6c0-1.66 1.34-3 3-3s3 1.34 3 3v2H9V6zm9 14H6V10h12v10zm-6-3c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2z"/></svg>
+            Los mensajes están cifrados de extremo a extremo. Nadie fuera de este chat, ni siquiera Echo, puede leerlos o escucharlos.
+         </div>
+      </div>
+
+      <footer class="chat-input-area">
+        <input type="file" id="file-input" class="hidden" />
+        <button id="btn-upload-file" class="btn-icon-only attach-btn" title="Adjuntar Archivo">
+          <svg viewBox="0 0 24 24"><path fill="currentColor" d="M16.5 6v11.5c0 2.21-1.79 4-4 4s-4-1.79-4-4V5a2.5 2.5 0 015 0v10.5c0 .55-.45 1-1 1s-1-.45-1-1V6H10v9.5a2.5 2.5 0 005 0V5c0-2.21-1.79-4-4-4S7 2.79 7 5v12.5c0 3.04 2.46 5.5 5.5 5.5s5.5-2.46 5.5-5.5V6h-1.5z"/></svg>
+        </button>
+        
+        <div class="input-wrapper">
+          <input type="text" id="message-input" class="message-input" placeholder="Escribe un mensaje..." autocomplete="off" />
+        </div>
+
+        <!-- Mic Button -->
+        <button id="btn-record" class="btn-primary-round mic-btn" title="Grabar Audio">
+          <svg viewBox="0 0 24 24" class="mic-icon"><path fill="currentColor" d="M12 14c1.66 0 2.99-1.34 2.99-3L15 5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3zm5.3-3c0 3-2.54 5.1-5.3 5.1S6.7 14 6.7 11H5c0 3.41 2.72 6.23 6 6.72V21h2v-3.28c3.28-.48 6-3.3 6-6.72h-1.7z"/></svg>
+        </button>
+        
+        <!-- Send Button (Visually alternative via CSS but driven by JS) -->
+        <button id="btn-send" class="btn-primary-round send-btn hidden" title="Enviar Mensaje">
+          <svg viewBox="0 0 24 24"><path fill="currentColor" d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
+        </button>
+
+      </footer>
+    </section>
+
+  </main>
+
+  <!-- External Dependency (PeerJS) -->
+  <script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
+  <script src="app.js?v=20260312_1"></script>
+</body>
+</html>
