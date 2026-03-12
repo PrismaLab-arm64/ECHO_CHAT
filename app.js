@@ -1,6 +1,6 @@
 /* =============================================
    ECHO CHAT - Minimalist Core Logic 
-   Version: 3.0.0
+   Version: 3.1.0 (Safety/Compatibility Patch)
    ============================================= */
 
 let peer = null;
@@ -37,8 +37,7 @@ const UI = {
   messagesContainer: document.getElementById('messages-container'),
   statusIndicator: document.getElementById('status'),
   chatPeerId: document.getElementById('chat-peer-id'),
-  fileInput: document.getElementById('file-input'),
-  installPrompt: document.getElementById('install-prompt')
+  fileInput: document.getElementById('file-input')
 };
 
 let activeMessages = [];
@@ -50,17 +49,21 @@ let isRecording = false;
    INITIALIZATION
    ============================================= */
 document.addEventListener('DOMContentLoaded', () => {
-  setupEventListeners();
-  initSplashScreen();
-  initSecurity();
+  try {
+    setupEventListeners();
+    initSplashScreen();
+    initSecurity();
+  } catch (err) {
+    alert("Error de Inicio Crítico (posible browser antiguo): " + err.message);
+  }
 });
 
 function initSplashScreen() {
   setTimeout(() => {
-    if(screens.splash) screens.splash.classList.remove('active');
+    if (screens.splash) screens.splash.classList.remove('active');
     
-    // Explicitly unhide terminal using standard display mechanics to override any CSS bugs
-    if(screens.terminal) {
+    // Explicitly unhide terminal using standard display mechanics
+    if (screens.terminal) {
       screens.terminal.classList.remove('hidden');
       screens.terminal.style.display = 'flex';
     }
@@ -70,60 +73,85 @@ function initSplashScreen() {
 }
 
 function setupEventListeners() {
-  UI.btnCreateRoom?.addEventListener('click', createRoom);
-  UI.btnJoinRoom?.addEventListener('click', () => {
-    showScreen(screens.joinRoom);
-    UI.peerIdInput?.focus();
-  });
-
-  UI.btnBackFromCreate?.addEventListener('click', () => {
-    destroyPeer();
-    showScreen(screens.welcome);
-  });
-
-  UI.btnBackFromJoin?.addEventListener('click', () => {
-    UI.peerIdInput.value = '';
-    showScreen(screens.welcome);
-  });
-
-  UI.btnConnect?.addEventListener('click', connectToPeer);
-  UI.btnDisconnect?.addEventListener('click', disconnect);
-  
-  UI.btnCopyId?.addEventListener('click', () => {
-    navigator.clipboard.writeText(UI.roomIdInput.value).then(() => {
-      systemAlert('Enlace Copiado', 'success');
+  if (UI.btnCreateRoom) UI.btnCreateRoom.addEventListener('click', createRoom);
+  if (UI.btnJoinRoom) {
+    UI.btnJoinRoom.addEventListener('click', () => {
+      showScreen(screens.joinRoom);
+      if (UI.peerIdInput) UI.peerIdInput.focus();
     });
-  });
+  }
 
-  UI.btnRegenerateId?.addEventListener('click', () => {
-    destroyPeer();
-    createRoom();
-  });
+  if (UI.btnBackFromCreate) {
+    UI.btnBackFromCreate.addEventListener('click', () => {
+      destroyPeer();
+      showScreen(screens.welcome);
+    });
+  }
 
-  UI.btnSend?.addEventListener('click', sendMessage);
-  UI.messageInput?.addEventListener('input', () => {
-    UI.btnSend.classList.toggle('hidden', UI.messageInput.value.trim().length === 0);
-  });
-  UI.messageInput?.addEventListener('keypress', (e) => {
-    if (e.key === 'Enter') sendMessage();
-  });
-  UI.peerIdInput?.addEventListener('keypress', (e) => {
-    if (e.key === 'Enter') connectToPeer();
-  });
+  if (UI.btnBackFromJoin) {
+    UI.btnBackFromJoin.addEventListener('click', () => {
+      if (UI.peerIdInput) UI.peerIdInput.value = '';
+      showScreen(screens.welcome);
+    });
+  }
 
-  UI.btnUploadFile?.addEventListener('click', () => UI.fileInput?.click());
-  UI.fileInput?.addEventListener('change', handleFileUpload);
+  if (UI.btnConnect) UI.btnConnect.addEventListener('click', connectToPeer);
+  if (UI.btnDisconnect) UI.btnDisconnect.addEventListener('click', disconnect);
+  
+  if (UI.btnCopyId) {
+    UI.btnCopyId.addEventListener('click', () => {
+      if (UI.roomIdInput && navigator.clipboard) {
+        navigator.clipboard.writeText(UI.roomIdInput.value).then(() => {
+          systemAlert('Enlace Copiado', 'success');
+        });
+      }
+    });
+  }
+
+  if (UI.btnRegenerateId) {
+    UI.btnRegenerateId.addEventListener('click', () => {
+      destroyPeer();
+      createRoom();
+    });
+  }
+
+  if (UI.btnSend) UI.btnSend.addEventListener('click', sendMessage);
+  if (UI.messageInput) {
+    UI.messageInput.addEventListener('input', () => {
+      if (UI.btnSend) UI.btnSend.classList.toggle('hidden', UI.messageInput.value.trim().length === 0);
+    });
+    UI.messageInput.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') sendMessage();
+    });
+  }
+  
+  if (UI.peerIdInput) {
+    UI.peerIdInput.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') connectToPeer();
+    });
+  }
+
+  if (UI.btnUploadFile) {
+    UI.btnUploadFile.addEventListener('click', () => {
+      if (UI.fileInput) UI.fileInput.click();
+    });
+  }
+  if (UI.fileInput) UI.fileInput.addEventListener('change', handleFileUpload);
   
   // Voice Recording
-  UI.btnRecord?.addEventListener('mousedown', startVoiceRecording);
-  UI.btnRecord?.addEventListener('mouseup', stopVoiceRecording);
-  UI.btnRecord?.addEventListener('touchstart', (e) => { e.preventDefault(); startVoiceRecording(); });
-  UI.btnRecord?.addEventListener('touchend', (e) => { e.preventDefault(); stopVoiceRecording(); });
+  if (UI.btnRecord) {
+    UI.btnRecord.addEventListener('mousedown', startVoiceRecording);
+    UI.btnRecord.addEventListener('mouseup', stopVoiceRecording);
+    UI.btnRecord.addEventListener('touchstart', (e) => { e.preventDefault(); startVoiceRecording(); });
+    UI.btnRecord.addEventListener('touchend', (e) => { e.preventDefault(); stopVoiceRecording(); });
+  }
 }
 
 function showScreen(screen) {
-  Object.values(screens).forEach(s => s?.classList.remove('active'));
-  screen?.classList.add('active');
+  Object.values(screens).forEach(s => {
+    if (s) s.classList.remove('active');
+  });
+  if (screen) screen.classList.add('active');
 }
 
 /* =============================================
@@ -142,21 +170,20 @@ function initPeerOptions() {
 function createRoom() {
   showScreen(screens.createRoom);
   myPeerId = generateUniqueId();
-  if(UI.roomIdInput) UI.roomIdInput.value = "Generando...";
+  if (UI.roomIdInput) UI.roomIdInput.value = "Generando...";
   
-  // Destruir peer anterior si existe para evitar conflictos
-  if(peer) peer.destroy();
+  if (peer) peer.destroy();
 
   peer = new Peer(myPeerId, initPeerOptions());
   
   peer.on('open', (id) => {
     isHost = true;
-    if(UI.roomIdInput) UI.roomIdInput.value = id;
+    if (UI.roomIdInput) UI.roomIdInput.value = id;
     updateStatus('ESPERANDO CONEXIÓN...', 'warning');
   });
 
   peer.on('connection', (conn) => {
-    if (currentConnection?.open) {
+    if (currentConnection && currentConnection.open) {
       conn.close(); return;
     }
     const approve = confirm(`¿Permitir conexión entrante de:\n${conn.peer}?`);
@@ -169,7 +196,7 @@ function createRoom() {
 }
 
 function connectToPeer() {
-  const targetId = UI.peerIdInput?.value.trim().toUpperCase();
+  const targetId = UI.peerIdInput ? UI.peerIdInput.value.trim().toUpperCase() : '';
   if (!targetId || !targetId.startsWith('ECHO_')) return systemAlert('ID inválido.', 'error');
 
   myPeerId = generateUniqueId();
@@ -189,7 +216,7 @@ function setupConnection(conn) {
   
   conn.on('open', () => {
     showScreen(screens.chat);
-    if(UI.chatPeerId) UI.chatPeerId.textContent = isHost ? conn.peer : conn.peer;
+    if (UI.chatPeerId) UI.chatPeerId.textContent = isHost ? conn.peer : conn.peer;
     updateStatus('EN LÍNEA', 'success');
   });
 
@@ -210,17 +237,17 @@ function setupConnection(conn) {
 }
 
 function disconnect() {
-  currentConnection?.close();
+  if (currentConnection) currentConnection.close();
   currentConnection = null;
   destroyPeer();
   showScreen(screens.welcome);
   updateStatus('OFFLINE', 'error');
-  if(UI.messagesContainer) UI.messagesContainer.innerHTML = '';
+  if (UI.messagesContainer) UI.messagesContainer.innerHTML = '';
   activeMessages = [];
 }
 
 function destroyPeer() {
-  peer?.destroy();
+  if (peer) peer.destroy();
   peer = null;
   isHost = false;
   myPeerId = null;
@@ -234,17 +261,16 @@ function updateStatus(text, type) {
 }
 
 function systemAlert(msg, type='info') {
-  alert(msg); // Reduced code: simple minimal alerts instead of complex custom toast
+  alert(msg);
 }
 
 /* =============================================
    MESSAGING LOGIC
    ============================================= */
 function sendMessage() {
-  const text = UI.messageInput?.value.trim();
-  if (!text || !currentConnection?.open) return;
+  const text = UI.messageInput ? UI.messageInput.value.trim() : '';
+  if (!text || !currentConnection || !currentConnection.open) return;
 
-  // Destruir mensajes previos al responder (feature mantenida)
   activeMessages.forEach(el => el.remove());
   activeMessages = [];
 
@@ -252,9 +278,11 @@ function sendMessage() {
   currentConnection.send(JSON.stringify(msgPayload));
   appendMessage(text, 'sent');
   
-  UI.messageInput.value = '';
-  UI.btnSend.classList.add('hidden');
-  UI.messageInput.focus();
+  if (UI.messageInput) {
+    UI.messageInput.value = '';
+    UI.messageInput.focus();
+  }
+  if (UI.btnSend) UI.btnSend.classList.add('hidden');
 }
 
 function handleIncomingText(data) {
@@ -276,8 +304,10 @@ function appendMessage(text, type) {
   body.appendChild(timer);
 
   div.appendChild(body);
-  UI.messagesContainer.appendChild(div);
-  UI.messagesContainer.scrollTop = UI.messagesContainer.scrollHeight;
+  if (UI.messagesContainer) {
+    UI.messagesContainer.appendChild(div);
+    UI.messagesContainer.scrollTop = UI.messagesContainer.scrollHeight;
+  }
   activeMessages.push(div);
 }
 
@@ -286,7 +316,7 @@ function appendMessage(text, type) {
    ============================================= */
 function handleFileUpload(e) {
   const file = e.target.files[0];
-  if (!file || !currentConnection?.open) return;
+  if (!file || !currentConnection || !currentConnection.open) return;
   if (file.size > 20 * 1024 * 1024) return systemAlert('Archivo demasiado grande (max 20MB)');
 
   const reader = new FileReader();
@@ -299,7 +329,9 @@ function handleFileUpload(e) {
   reader.readAsDataURL(file);
 }
 
-function handleIncomingFile({ name, data }) {
+function handleIncomingFile(payload) {
+  const name = payload.name;
+  const data = payload.data;
   const div = document.createElement('div');
   div.className = 'message received file-message';
   div.innerHTML = `
@@ -311,13 +343,15 @@ function handleIncomingFile({ name, data }) {
       </div>
     </div>
   `;
-  UI.messagesContainer.appendChild(div);
-  UI.messagesContainer.scrollTop = UI.messagesContainer.scrollHeight;
+  if (UI.messagesContainer) {
+    UI.messagesContainer.appendChild(div);
+    UI.messagesContainer.scrollTop = UI.messagesContainer.scrollHeight;
+  }
   activeMessages.push(div);
 }
 
 async function startVoiceRecording() {
-  if (isRecording || !currentConnection?.open) return;
+  if (isRecording || !currentConnection || !currentConnection.open) return;
   try {
     const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
     mediaRecorder = new MediaRecorder(stream);
@@ -335,18 +369,21 @@ async function startVoiceRecording() {
     };
     mediaRecorder.start();
     isRecording = true;
-    UI.btnRecord.style.backgroundColor = 'var(--danger)';
-  } catch(e) {}
+    if (UI.btnRecord) UI.btnRecord.style.backgroundColor = 'var(--danger)';
+  } catch(e) {
+    console.warn("Audio error: ", e);
+  }
 }
 
 function stopVoiceRecording() {
   if (!isRecording) return;
-  mediaRecorder.stop();
+  if (mediaRecorder) mediaRecorder.stop();
   isRecording = false;
-  if(UI.btnRecord) UI.btnRecord.style.backgroundColor = 'var(--primary)';
+  if (UI.btnRecord) UI.btnRecord.style.backgroundColor = 'var(--primary)';
 }
 
-function handleIncomingVoice({ data }, isSent=false) {
+function handleIncomingVoice(payload, isSent=false) {
+  const data = payload.data;
   const div = document.createElement('div');
   div.className = `message voice-message ${isSent ? 'sent':'received'}`;
   div.innerHTML = `
@@ -354,20 +391,24 @@ function handleIncomingVoice({ data }, isSent=false) {
       <audio controls src="${data}"></audio>
     </div>
   `;
-  UI.messagesContainer.appendChild(div);
-  UI.messagesContainer.scrollTop = UI.messagesContainer.scrollHeight;
-  if(!isSent) activeMessages.push(div);
+  if (UI.messagesContainer) {
+    UI.messagesContainer.appendChild(div);
+    UI.messagesContainer.scrollTop = UI.messagesContainer.scrollHeight;
+  }
+  if (!isSent) activeMessages.push(div);
 }
 
 /* =============================================
-   SECURITY (Minimal)
+   SECURITY
    ============================================= */
 function initSecurity() {
   setInterval(() => {
-    if (currentConnection?.open) currentConnection.send(JSON.stringify({ type: 'HEARTBEAT' }));
+    if (currentConnection && currentConnection.open) {
+      currentConnection.send(JSON.stringify({ type: 'HEARTBEAT' }));
+    }
   }, 10000);
 
-  // Panic button Escape x3
+  // Panic button
   let escCount = 0;
   let escTimer = null;
   document.addEventListener('keydown', (e) => {
@@ -382,7 +423,6 @@ function initSecurity() {
     }
   });
 
-  // Anti-Copy & Anti-Screenshot Protection
   document.body.style.userSelect = 'none';
   document.body.style.webkitUserSelect = 'none';
   
