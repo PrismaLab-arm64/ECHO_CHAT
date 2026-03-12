@@ -43,6 +43,22 @@
       <p class="splash-subtitle">Cifrado de Extremo a Extremo</p>
     </div>
     <div class="spinner"></div>
+    <script>
+      // Protocol Alpha: Fallback de seguridad si falla la carga dinámica
+      setTimeout(function() {
+        var splash = document.getElementById('splash-screen');
+        var term = document.getElementById('terminal');
+        if (splash && splash.classList.contains('active')) {
+          console.warn('[DELTA] Iniciando despegue de emergencia...');
+          splash.classList.remove('active');
+          splash.style.display = 'none';
+          if (term) {
+            term.classList.remove('hidden');
+            term.style.display = 'flex';
+          }
+        }
+      }, 5000);
+    </script>
   </div>
 
   <!-- Main App Container -->

@@ -1,5 +1,5 @@
 /* =============================================
-   ECHO CHAT - PROTOCOLO DELTA v5.0
+   ECHO CHAT - PROTOCOLO DELTA v5.1
    NIVEL: CLASIFICADO (STREAK DE SEGURIDAD)
    ============================================= */
 
@@ -8,36 +8,8 @@ let currentConnection = null;
 let myPeerId = null;
 let isHost = false;
 
-const screens = {
-  splash: document.getElementById('splash-screen'),
-  terminal: document.getElementById('terminal'),
-  welcome: document.getElementById('welcome-screen'),
-  createRoom: document.getElementById('create-room-screen'),
-  joinRoom: document.getElementById('join-room-screen'),
-  chat: document.getElementById('chat-screen')
-};
-
-const UI = {
-  btnCreateRoom: document.getElementById('btn-create-room'),
-  btnJoinRoom: document.getElementById('btn-join-room'),
-  btnBackFromCreate: document.getElementById('btn-back-from-create'),
-  btnBackFromJoin: document.getElementById('btn-back-from-join'),
-  btnConnect: document.getElementById('btn-connect'),
-  btnDisconnect: document.getElementById('btn-disconnect'),
-  btnSend: document.getElementById('btn-send'),
-  btnCopyId: document.getElementById('btn-copy-id'),
-  btnRegenerateId: document.getElementById('btn-regenerate-id'),
-  btnUploadFile: document.getElementById('btn-upload-file'),
-  btnRecord: document.getElementById('btn-record'),
-  
-  roomIdInput: document.getElementById('room-id'),
-  peerIdInput: document.getElementById('peer-id-input'),
-  messageInput: document.getElementById('message-input'),
-  messagesContainer: document.getElementById('messages-container'),
-  statusIndicator: document.getElementById('status'),
-  chatPeerId: document.getElementById('chat-peer-id'),
-  fileInput: document.getElementById('file-input')
-};
+let screens = {};
+let UI = {};
 
 let activeMessages = [];
 let mediaRecorder = null;
@@ -45,72 +17,112 @@ let audioChunks = [];
 let isRecording = false;
 
 function logDelta(msg) {
-  console.log(`%c[DELTA-V5] ${msg}`, "color: #00ff00; font-weight: bold; background: #000; padding: 2px 5px;");
+  console.log(`%c[DELTA-V5.1] ${msg}`, "color: #00ff00; font-weight: bold; background: #000; padding: 2px 5px;");
 }
 
 /* =============================================
-   INITIALIZATION
+   INITIALIZATION (ROBUSTA)
    ============================================= */
 function initDelta() {
-  logDelta("Delta V5 Online. Purgando sistemas previos...");
+  logDelta("Delta V5.1 Online. Iniciando secuencia de arranque de alto nivel...");
+  
+  // Selección de elementos INSIDE init para evitar nulos por carga dinámica
+  screens = {
+    splash: document.getElementById('splash-screen'),
+    terminal: document.getElementById('terminal'),
+    welcome: document.getElementById('welcome-screen'),
+    createRoom: document.getElementById('create-room-screen'),
+    joinRoom: document.getElementById('join-room-screen'),
+    chat: document.getElementById('chat-screen')
+  };
+
+  UI = {
+    btnCreateRoom: document.getElementById('btn-create-room'),
+    btnJoinRoom: document.getElementById('btn-join-room'),
+    btnBackFromCreate: document.getElementById('btn-back-from-create'),
+    btnBackFromJoin: document.getElementById('btn-back-from-join'),
+    btnConnect: document.getElementById('btn-connect'),
+    btnDisconnect: document.getElementById('btn-disconnect'),
+    btnSend: document.getElementById('btn-send'),
+    btnCopyId: document.getElementById('btn-copy-id'),
+    btnRegenerateId: document.getElementById('btn-regenerate-id'),
+    btnUploadFile: document.getElementById('btn-upload-file'),
+    btnRecord: document.getElementById('btn-record'),
+    roomIdInput: document.getElementById('room-id'),
+    peerIdInput: document.getElementById('peer-id-input'),
+    messageInput: document.getElementById('message-input'),
+    messagesContainer: document.getElementById('messages-container'),
+    statusIndicator: document.getElementById('status'),
+    chatPeerId: document.getElementById('chat-peer-id'),
+    fileInput: document.getElementById('file-input')
+  };
+
   try {
     setupEventListeners();
     initSplashScreen();
     initSecurity();
+    updateStatus('SISTEMA LISTO', 'success');
   } catch (err) {
     logDelta("Error de arranque: " + err.message);
   }
 }
 
-if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', initDelta);
-} else {
+// Check ReadyState for immediate execution
+if (document.readyState === 'complete' || document.readyState === 'interactive') {
   initDelta();
+} else {
+  document.addEventListener('DOMContentLoaded', initDelta);
 }
 
 function initSplashScreen() {
+  logDelta("Limpiando Splash Screen...");
   setTimeout(() => {
-    if (screens.splash) screens.splash.classList.remove('active');
+    if (screens.splash) {
+        screens.splash.classList.remove('active');
+        screens.splash.style.opacity = '0';
+        setTimeout(() => screens.splash.style.display = 'none', 500);
+    }
     if (screens.terminal) {
       screens.terminal.classList.remove('hidden');
       screens.terminal.style.display = 'flex';
+      screens.terminal.style.opacity = '1';
     }
     showScreen(screens.welcome);
-  }, 1000);
+  }, 800);
 }
 
 function setupEventListeners() {
-  if (UI.btnCreateRoom) UI.btnCreateRoom.addEventListener('click', createRoom);
+  if (UI.btnCreateRoom) UI.btnCreateRoom.onclick = createRoom;
   if (UI.btnJoinRoom) {
-    UI.btnJoinRoom.addEventListener('click', () => {
+    UI.btnJoinRoom.onclick = () => {
       showScreen(screens.joinRoom);
       if (UI.peerIdInput) UI.peerIdInput.focus();
-    });
+    };
   }
-  if (UI.btnBackFromCreate) UI.btnBackFromCreate.addEventListener('click', () => { destroyPeer(); showScreen(screens.welcome); });
-  if (UI.btnBackFromJoin) UI.btnBackFromJoin.addEventListener('click', () => { if (UI.peerIdInput) UI.peerIdInput.value = ''; showScreen(screens.welcome); });
-  if (UI.btnConnect) UI.btnConnect.addEventListener('click', connectToPeer);
-  if (UI.btnDisconnect) UI.btnDisconnect.addEventListener('click', disconnect);
+  if (UI.btnBackFromCreate) UI.btnBackFromCreate.onclick = () => { destroyPeer(); showScreen(screens.welcome); };
+  if (UI.btnBackFromJoin) UI.btnBackFromJoin.onclick = () => { if (UI.peerIdInput) UI.peerIdInput.value = ''; showScreen(screens.welcome); };
+  if (UI.btnConnect) UI.btnConnect.onclick = connectToPeer;
+  if (UI.btnDisconnect) UI.btnDisconnect.onclick = disconnect;
   if (UI.btnCopyId) {
-    UI.btnCopyId.addEventListener('click', () => {
+    UI.btnCopyId.onclick = () => {
       if (UI.roomIdInput) {
         navigator.clipboard.writeText(UI.roomIdInput.value);
         logDelta("ID copiado.");
       }
-    });
+    };
   }
-  if (UI.btnRegenerateId) UI.btnRegenerateId.addEventListener('click', () => { destroyPeer(); createRoom(); });
-  if (UI.btnSend) UI.btnSend.addEventListener('click', sendMessage);
+  if (UI.btnRegenerateId) UI.btnRegenerateId.onclick = () => { destroyPeer(); createRoom(); };
+  if (UI.btnSend) UI.btnSend.onclick = sendMessage;
   if (UI.messageInput) {
-    UI.messageInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') sendMessage(); });
+    UI.messageInput.onkeypress = (e) => { if (e.key === 'Enter') sendMessage(); };
   }
-  if (UI.btnUploadFile) UI.btnUploadFile.addEventListener('click', () => UI.fileInput.click());
-  if (UI.fileInput) UI.fileInput.addEventListener('change', handleFileUpload);
+  if (UI.btnUploadFile) UI.btnUploadFile.onclick = () => UI.fileInput.click();
+  if (UI.fileInput) UI.fileInput.onchange = handleFileUpload;
   if (UI.btnRecord) {
-    UI.btnRecord.addEventListener('mousedown', startVoiceRecording);
-    UI.btnRecord.addEventListener('mouseup', stopVoiceRecording);
-    UI.btnRecord.addEventListener('touchstart', (e) => { e.preventDefault(); startVoiceRecording(); });
-    UI.btnRecord.addEventListener('touchend', (e) => { e.preventDefault(); stopVoiceRecording(); });
+    UI.btnRecord.onmousedown = startVoiceRecording;
+    UI.btnRecord.onmouseup = stopVoiceRecording;
+    UI.btnRecord.ontouchstart = (e) => { e.preventDefault(); startVoiceRecording(); };
+    UI.btnRecord.ontouchend = (e) => { e.preventDefault(); stopVoiceRecording(); };
   }
 }
 
@@ -141,6 +153,7 @@ function createRoom() {
   });
 
   peer.on('connection', (conn) => setupConnection(conn));
+  peer.on('error', (err) => logDelta("Peer Error: " + err.type));
 }
 
 function connectToPeer() {
@@ -163,10 +176,12 @@ function setupConnection(conn) {
     updateStatus('EN LÍNEA', 'success');
   });
   conn.on('data', (data) => {
-    const payload = JSON.parse(data);
-    if (payload.type === 'TEXT') appendMessage(payload.text, 'received');
-    else if (payload.type === 'MEDIA' || payload.type === 'VIDEO') renderDeltaMedia(payload);
-    else if (payload.type === 'VOICE') renderDeltaVoice(payload);
+    try {
+        const payload = JSON.parse(data);
+        if (payload.type === 'TEXT') appendMessage(payload.text, 'received');
+        else if (payload.type === 'MEDIA' || payload.type === 'VIDEO') renderDeltaMedia(payload);
+        else if (payload.type === 'VOICE') renderDeltaVoice(payload);
+    } catch(e) { logDelta("Data error."); }
   });
   conn.on('close', disconnect);
 }
@@ -175,6 +190,7 @@ function disconnect() {
   if (currentConnection) currentConnection.close();
   destroyPeer();
   showScreen(screens.welcome);
+  updateStatus('SISTEMA LISTO', 'success');
 }
 
 function destroyPeer() {
@@ -184,7 +200,7 @@ function destroyPeer() {
 
 function updateStatus(text, type) {
   if (UI.statusIndicator) {
-    UI.statusIndicator.textContent = text;
+    UI.statusIndicator.textContent = `● ${text}`;
     UI.statusIndicator.className = `status-badge ${type}`;
   }
 }
@@ -219,7 +235,6 @@ function appendMessage(text, type) {
   activeMessages.push(div);
 }
 
-// MOTOR DE RENDERIZADO DELTA V5 (CANVAS + VIDEO CONTROL)
 function renderDeltaMedia(payload) {
     const isVideo = payload.type === 'VIDEO' || payload.data.startsWith('data:video');
     const div = document.createElement('div');
@@ -234,7 +249,7 @@ function renderDeltaMedia(payload) {
     if (isVideo) {
         const video = document.createElement('video');
         video.src = payload.data;
-        video.muted = true; // Necesario para autoplay
+        video.muted = true;
         video.playsInline = true;
         video.loop = true;
         
@@ -251,7 +266,6 @@ function renderDeltaMedia(payload) {
             draw();
         };
 
-        // Botón de Unmute/Play
         const overlay = document.createElement('button');
         overlay.className = 'delta-video-overlay';
         overlay.innerHTML = '🔊';
