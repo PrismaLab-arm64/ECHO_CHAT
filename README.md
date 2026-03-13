@@ -1,25 +1,25 @@
 <div align="center">
-  <img src="icon-192.png" alt="ECHO_OFF Black Ops" width="160" style="border-radius: 30px; border: 3px solid #0084ff; box-shadow: 0 0 40px rgba(0, 132, 255, 0.6);">
+  <img src="icon-192.png" alt="ECHO CHAT Black Ops" width="160" style="border-radius: 30px; border: 3px solid #0084ff; box-shadow: 0 0 40px rgba(0, 132, 255, 0.6);">
 
-  # 🦅 **ECHO_OFF v5.1: EL PROTOCOLO "FUERZA DELTA"** 🦅
+  # 🦅 **ECHO CHAT v5.1: EL PROTOCOLO "FUERZA DELTA"** 🦅
   ### *Nivel de Acceso: CLASIFICADO - Sin Rastro Terrenal*
 
-  [![Seguridad: NIVEL AGENCIA](https://img.shields.io/badge/Seguridad-NIVEL_AGENCIA-000000.svg?style=for-the-badge&logo=cia&logoColor=white)](https://prismalab-arm64.github.io/ECHO_OFF/)
-  [![Cifrado: CUÁNTICO_VOLÁTIL](https://img.shields.io/badge/Cifrado-VOLÁTIL-ff0000.svg?style=for-the-badge&logo=shield)](https://prismalab-arm64.github.io/ECHO_OFF/)
-  [![Rastros: CERO_ABSOLUTO](https://img.shields.io/badge/Rastros-CERO_ABSOLUTO-31a24c.svg?style=for-the-badge&logo=ghost)](https://prismalab-arm64.github.io/ECHO_OFF/)
+  [![Seguridad: NIVEL AGENCIA](https://img.shields.io/badge/Seguridad-NIVEL_AGENCIA-000000.svg?style=for-the-badge&logo=cia&logoColor=white)](https://prismalab-arm64.github.io/ECHO_CHAT/)
+  [![Cifrado: CUÁNTICO_VOLÁTIL](https://img.shields.io/badge/Cifrado-VOLÁTIL-ff0000.svg?style=for-the-badge&logo=shield)](https://prismalab-arm64.github.io/ECHO_CHAT/)
+  [![Rastros: CERO_ABSOLUTO](https://img.shields.io/badge/Rastros-CERO_ABSOLUTO-31a24c.svg?style=for-the-badge&logo=ghost)](https://prismalab-arm64.github.io/ECHO_CHAT/)
 </div>
 
 <br>
 
 <h2 align="center">
-  <a href="https://prismalab-arm64.github.io/ECHO_OFF/">⚡ INICIAR TRANSMISIÓN SEGURA ⚡</a>
+  <a href="https://prismalab-arm64.github.io/ECHO_CHAT/">⚡ INICIAR TRANSMISIÓN SEGURA ⚡</a>
 </h2>
 
 ---
 
 ## 🛰️ PROTOCOLO DE EXTRACCIÓN DE DATOS (NIVEL NASA)
 
-**ECHO_OFF v5.1** es la culminación de la guerra contra la persistencia de datos. Hemos implementado el motor **Delta v5**, cerrando el 0.001% de las fugas que quedaban.
+**ECHO CHAT v5.1** es la culminación de la guerra contra la persistencia de datos. Hemos implementado el motor **Delta v5**, cerrando el 0.001% de las fugas que quedaban.
 
 ### 🛡️ BLINDAJE MULTIMEDIA REFORZADO (CANVAS RENDERING)
 *   **Aniquilación de Etiquetas Nativas:** Hemos erradicado las etiquetas `<img>`, `<audio>` y `<video>`. El navegador ya no detecta "archivos" que se puedan descargar.
@@ -37,7 +37,7 @@
 
 ## 🕵️‍♂️ PUNTO DE VISTA DE INTELIGENCIA (SEGURIDAD)
 
-> *"ECHO_OFF v5.1 no es comunicación; es una sombra digital que desaparece al ser observada."*
+> *"ECHO CHAT v5.1 no es comunicación; es una sombra digital que desaparece al ser observada."*
 
 ### CARACTERÍSTICAS DE GRADO MILITAR:
 1.  **Arranque de Emergencia Alpha:** Bypass de caché y cargador dinámico con firma de tiempo para asegurar la versión más reciente.
