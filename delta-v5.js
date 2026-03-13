@@ -92,42 +92,49 @@ function initSplashScreen() {
 }
 
 function setupEventListeners() {
-  if (UI.btnCreateRoom) UI.btnCreateRoom.onclick = createRoom;
+  if (UI.btnCreateRoom) UI.btnCreateRoom.addEventListener('click', createRoom);
   if (UI.btnJoinRoom) {
-    UI.btnJoinRoom.onclick = () => {
+    UI.btnJoinRoom.addEventListener('click', () => {
       showScreen(screens.joinRoom);
-      if (UI.peerIdInput) UI.peerIdInput.focus();
-    };
+      setTimeout(() => { if (UI.peerIdInput) UI.peerIdInput.focus(); }, 300);
+    });
   }
-  if (UI.btnBackFromCreate) UI.btnBackFromCreate.onclick = () => { destroyPeer(); showScreen(screens.welcome); };
-  if (UI.btnBackFromJoin) UI.btnBackFromJoin.onclick = () => { if (UI.peerIdInput) UI.peerIdInput.value = ''; showScreen(screens.welcome); };
-  if (UI.btnConnect) UI.btnConnect.onclick = connectToPeer;
-  if (UI.btnDisconnect) UI.btnDisconnect.onclick = disconnect;
+  if (UI.btnBackFromCreate) UI.btnBackFromCreate.addEventListener('click', () => { destroyPeer(); showScreen(screens.welcome); });
+  if (UI.btnBackFromJoin) UI.btnBackFromJoin.addEventListener('click', () => { if (UI.peerIdInput) UI.peerIdInput.value = ''; showScreen(screens.welcome); });
+  if (UI.btnConnect) UI.btnConnect.addEventListener('click', connectToPeer);
+  if (UI.btnDisconnect) UI.btnDisconnect.addEventListener('click', disconnect);
+  
   if (UI.btnCopyId) {
-    UI.btnCopyId.onclick = () => {
+    UI.btnCopyId.addEventListener('click', () => {
       if (UI.roomIdInput) {
         navigator.clipboard.writeText(UI.roomIdInput.value);
         logDelta("ID copiado.");
+        updateStatus('ID COPIADO', 'success');
+        setTimeout(() => updateStatus('SALA ABIERTA', 'warning'), 1500);
       }
-    };
+    });
   }
-  if (UI.btnRegenerateId) UI.btnRegenerateId.onclick = () => { destroyPeer(); createRoom(); };
-  if (UI.btnSend) UI.btnSend.onclick = sendMessage;
+  
+  if (UI.btnRegenerateId) UI.btnRegenerateId.addEventListener('click', () => { destroyPeer(); createRoom(); });
+  if (UI.btnSend) UI.btnSend.addEventListener('click', sendMessage);
+  
   if (UI.messageInput) {
-    UI.messageInput.oninput = () => {
+    UI.messageInput.addEventListener('input', () => {
       const hasText = UI.messageInput.value.trim().length > 0;
       if (UI.btnSend) UI.btnSend.classList.toggle('hidden', !hasText);
       if (UI.btnRecord) UI.btnRecord.classList.toggle('hidden', hasText);
-    };
-    UI.messageInput.onkeypress = (e) => { if (e.key === 'Enter') sendMessage(); };
+    });
+    UI.messageInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') sendMessage(); });
   }
-  if (UI.btnUploadFile) UI.btnUploadFile.onclick = () => UI.fileInput.click();
-  if (UI.fileInput) UI.fileInput.onchange = handleFileUpload;
+  
+  if (UI.btnUploadFile) UI.btnUploadFile.addEventListener('click', () => UI.fileInput.click());
+  if (UI.fileInput) UI.fileInput.addEventListener('change', handleFileUpload);
+  
   if (UI.btnRecord) {
-    UI.btnRecord.onmousedown = startVoiceRecording;
-    UI.btnRecord.onmouseup = stopVoiceRecording;
-    UI.btnRecord.ontouchstart = (e) => { e.preventDefault(); startVoiceRecording(); };
-    UI.btnRecord.ontouchend = (e) => { e.preventDefault(); stopVoiceRecording(); };
+    UI.btnRecord.addEventListener('mousedown', startVoiceRecording);
+    UI.btnRecord.addEventListener('mouseup', stopVoiceRecording);
+    UI.btnRecord.addEventListener('touchstart', (e) => { e.preventDefault(); startVoiceRecording(); }, {passive: false});
+    UI.btnRecord.addEventListener('touchend', (e) => { e.preventDefault(); stopVoiceRecording(); }, {passive: false});
   }
 }
 
@@ -169,14 +176,23 @@ function createRoom() {
   });
 
   peer.on('connection', (conn) => setupConnection(conn));
-  peer.on('error', (err) => logDelta("Peer Error: " + err.type));
+  peer.on('error', (err) => {
+    logDelta("Peer Error: " + err.type);
+    updateStatus('ERROR: ' + err.type.toUpperCase(), 'error');
+  });
 }
 
 function connectToPeer() {
   const targetId = UI.peerIdInput.value.trim().toUpperCase();
-  if (!targetId.startsWith('ECHOCHAT_')) return;
+  // Soporte híbrido para evitar fallos durante la transición de caché
+  if (!targetId.startsWith('ECHO_') && !targetId.startsWith('ECHOCHAT_')) {
+    updateStatus('ID INVÁLIDO', 'error');
+    return;
+  }
+  updateStatus('CONECTANDO...', 'warning');
   myPeerId = generateUniqueId();
   if (peer) peer.destroy();
+  
   peer = new Peer(myPeerId, { 
     debug: 2,
     config: { 
@@ -184,7 +200,8 @@ function connectToPeer() {
         { urls: 'stun:stun.l.google.com:19302' },
         { urls: 'stun:stun1.l.google.com:19302' },
         { urls: 'stun:stun2.l.google.com:19302' },
-        { urls: 'stun:stun3.l.google.com:19302' }
+        { urls: 'stun:stun3.l.google.com:19302' },
+        { urls: 'stun:stun4.l.google.com:19302' }
       ] 
     }
   });
