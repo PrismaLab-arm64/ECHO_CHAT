@@ -1,5 +1,5 @@
 /* =========================================================
-   ECHO CHAT - Minimalist Modern UI (Meta/WhatsApp Style)
+   KRONX - Minimalist Modern UI (Meta/WhatsApp Style)
    ========================================================= */
 
 /* =============================================
@@ -7,26 +7,24 @@
    ============================================= */
 
 :root {
-  --primary: #0084ff;
-  --primary-hover: #0073e6;
-  --bg-main: #000000;
-  --bg-card: #0a0a0a;
-  --text-main: #e4e6eb;
-  --text-secondary: #b0b3b8;
-  --border: #1a1a1a;
-  --success: #31a24c;
-  --danger: #fa383e;
-  --shadow-sm: 0 1px 2px rgba(0,0,0,0.5);
-  --shadow-md: 0 4px 12px rgba(0,0,0,0.8);
-  --shadow-lg: 0 8px 50px rgba(0,0,0,1);
-  --radius-sm: 8px;
-  --radius-md: 12px;
-  --radius-lg: 20px;
-  --radius-pill: 9999px;
-  --bubble-sent: #0044cc;
-  --bubble-received: #1a1a1a;
-  --text-sent: #ffffff;
-  --text-received: #e4e6eb;
+  --wa-bg: #0b141a;
+  --wa-header: #202c33;
+  --wa-green: #00a884;
+  --wa-bubble-sent: #005c4b;
+  --wa-bubble-received: #202c33;
+  --wa-text: #e9edef;
+  --wa-text-muted: #8696a0;
+  --wa-input-bg: #2a3942;
+  --primary: var(--wa-green);
+  --bg-card: var(--wa-header);
+  --border: #222d34;
+  --radius-lg: 16px;
+}
+
+body {
+  background-color: var(--wa-bg);
+  background-image: url('https://user-images.githubusercontent.com/15075759/28719144-86dc0f70-73b1-11e7-911d-60d70fcded21.png'); /* WA pattern */
+  background-blend-mode: overlay;
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -156,22 +154,73 @@ svg { width: 24px; height: 24px; }
 }
 
 .chat-layout { padding: 0; }
-.chat-header { display: flex; align-items: center; justify-content: space-between; padding: 12px 16px; background-color: var(--bg-card); border-bottom: 1px solid var(--border); z-index: 10; }
-.chat-profile { display: flex; align-items: center; gap: 12px; }
-.avatar { width: 40px; height: 40px; border-radius: 50%; background-color: var(--primary); color: white; display: flex; align-items: center; justify-content: center; }
-.avatar svg { width: 20px; height: 20px; }
-.chat-info { display: flex; flex-direction: column; }
-.chat-name { font-size: 1rem; font-weight: 600; margin-bottom: 2px; }
-.chat-status { font-size: 0.75rem; color: var(--text-secondary); display: flex; align-items: center; gap: 4px; }
-.chat-status.online::before { content: ""; display: inline-block; width: 6px; height: 6px; background-color: var(--success); border-radius: 50%; }
+.chat-header {
+  background-color: var(--wa-header);
+  height: 60px;
+  padding: 0 16px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+.chat-name { color: var(--wa-text); font-size: 1.1rem; }
+.chat-status { color: var(--wa-green); text-transform: lowercase; }
 
 .messages-area {
-  flex-grow: 1; padding: 16px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px;
-  background-color: var(--bg-main);
-  background-image: url('bg-pattern.jpg');
-  background-size: cover;
-  background-position: center;
-  background-attachment: fixed;
+  background: transparent;
+  padding: 20px 7%;
+}
+
+.message { 
+  max-width: 85%; 
+  margin-bottom: 4px;
+  position: relative;
+  filter: drop-shadow(0 1px 0.5px rgba(0,0,0,0.13));
+}
+
+.message-body {
+  padding: 6px 7px 8px 9px;
+  font-size: 0.9rem;
+  border-radius: 8px;
+}
+
+.message.sent .message-body {
+  background-color: var(--wa-bubble-sent);
+  color: var(--wa-text);
+  border-top-right-radius: 0;
+}
+
+.message.received .message-body {
+  background-color: var(--wa-bubble-received);
+  color: var(--wa-text);
+  border-top-left-radius: 0;
+}
+
+/* Ticks WA Style */
+.tick-container {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: -4px;
+  gap: 2px;
+  opacity: 0.6;
+}
+.status-tick { width: 14px; height: 14px; color: #8696a0; }
+.status-tick.read { color: #53bdeb; }
+
+.chat-input-area {
+  background-color: transparent;
+  padding: 10px;
+  gap: 8px;
+}
+
+.input-wrapper {
+  background-color: var(--wa-input-bg);
+  border-radius: 24px;
+  padding: 0 15px;
+  height: 48px;
+}
+
+.mic-btn, .send-btn {
+  width: 48px; height: 48px;
+  border-radius: 50%;
+  background-color: var(--wa-green) !important;
 }
 
 @media (prefers-color-scheme: dark) {

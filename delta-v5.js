@@ -1,5 +1,5 @@
 /* =============================================
-   ECHO CHAT - PROTOCOLO DELTA v5.1
+   KRONX - PROTOCOLO DELTA v5.1
    NIVEL: CLASIFICADO (STREAK DE SEGURIDAD)
    ============================================= */
 
@@ -12,6 +12,7 @@ let screens = {};
 let UI = {};
 
 let activeMessages = [];
+let msgMap = new Map(); // Para rastrear ticks
 let mediaRecorder = null;
 let audioChunks = [];
 let isRecording = false;
@@ -147,7 +148,7 @@ function showScreen(screen) {
    P2P LOGIC
    ============================================= */
 function generateUniqueId() {
-  return `ECHOCHAT_${Date.now().toString(36).toUpperCase()}_${Math.random().toString(36).substring(2, 6).toUpperCase()}`;
+  return `KRONX_${Date.now().toString(36).toUpperCase()}_${Math.random().toString(36).substring(2, 6).toUpperCase()}`;
 }
 
 function createRoom() {
@@ -175,7 +176,13 @@ function createRoom() {
     updateStatus('SALA ABIERTA', 'warning');
   });
 
-  peer.on('connection', (conn) => setupConnection(conn));
+  peer.on('connection', (conn) => {
+    setupConnection(conn);
+    // Notificar que estamos online al recibir conexión
+    setTimeout(() => {
+        if (conn.open) conn.send(JSON.stringify({ type: 'STATUS', status: 'online' }));
+    }, 1000);
+  });
   peer.on('error', (err) => {
     logDelta("Peer Error: " + err.type);
     updateStatus('ERROR: ' + err.type.toUpperCase(), 'error');
@@ -185,7 +192,7 @@ function createRoom() {
 function connectToPeer() {
   const targetId = UI.peerIdInput.value.trim().toUpperCase();
   // Soporte híbrido para evitar fallos durante la transición de caché
-  if (!targetId.startsWith('ECHO_') && !targetId.startsWith('ECHOCHAT_')) {
+  if (!targetId.startsWith('ECHO_') && !targetId.startsWith('ECHOCHAT_') && !targetId.startsWith('KRONX_')) {
     updateStatus('ID INVÁLIDO', 'error');
     return;
   }
@@ -225,7 +232,12 @@ function setupConnection(conn) {
   conn.on('data', (data) => {
     try {
         const payload = JSON.parse(data);
-        if (payload.type === 'TEXT') appendMessage(payload.text, 'received');
+        if (payload.type === 'TEXT') {
+            appendMessage(payload.text, 'received', payload.msgId);
+            conn.send(JSON.stringify({ type: 'ACK', msgId: payload.msgId }));
+        }
+        else if (payload.type === 'ACK') markAsDelivered(payload.msgId);
+        else if (payload.type === 'STATUS') updateSubStatus(payload.status);
         else if (payload.type === 'MEDIA' || payload.type === 'VIDEO') renderDeltaMedia(payload);
         else if (payload.type === 'VOICE') renderDeltaVoice(payload);
     } catch(e) { logDelta("Data error."); }
@@ -259,29 +271,53 @@ function sendMessage() {
   const text = UI.messageInput.value.trim();
   if (!text || !currentConnection) return;
   
-  activeMessages.forEach(el => {
-    el.classList.add('destructive-glitch');
-    setTimeout(() => el.remove(), 500);
-  });
-  activeMessages = [];
+  const msgId = 'msg_' + Date.now();
+  currentConnection.send(JSON.stringify({ type: 'TEXT', text, msgId }));
+  appendMessage(text, 'sent', msgId);
   
-  currentConnection.send(JSON.stringify({ type: 'TEXT', text }));
-  appendMessage(text, 'sent');
   UI.messageInput.value = '';
   if (UI.btnSend) UI.btnSend.classList.add('hidden');
   if (UI.btnRecord) UI.btnRecord.classList.remove('hidden');
 }
 
-function appendMessage(text, type) {
+function appendMessage(text, type, msgId) {
   const div = document.createElement('div');
+  div.id = msgId;
   div.className = `message ${type}`;
+  
   const body = document.createElement('div');
   body.className = 'message-body';
   body.textContent = text;
+  
+  if (type === 'sent') {
+    const ticks = document.createElement('div');
+    ticks.className = 'tick-container';
+    ticks.innerHTML = `<svg class="status-tick" viewBox="0 0 24 24"><path fill="currentColor" d="M21,7L9,19L3.5,13.5L4.91,12.09L9,16.17L19.59,5.59L21,7Z"/></svg>`;
+    body.appendChild(ticks);
+  }
+  
   div.appendChild(body);
   UI.messagesContainer.appendChild(div);
   UI.messagesContainer.scrollTop = UI.messagesContainer.scrollHeight;
   activeMessages.push(div);
+}
+
+function markAsDelivered(msgId) {
+  const msgEl = document.getElementById(msgId);
+  if (msgEl) {
+    const ticks = msgEl.querySelector('.tick-container');
+    if (ticks) {
+        ticks.innerHTML = `
+            <svg class="status-tick read" viewBox="0 0 24 24" style="margin-right:-8px;"><path fill="currentColor" d="M21,7L9,19L3.5,13.5L4.91,12.09L9,16.17L19.59,5.59L21,7Z"/></svg>
+            <svg class="status-tick read" viewBox="0 0 24 24"><path fill="currentColor" d="M21,7L9,19L3.5,13.5L4.91,12.09L9,16.17L19.59,5.59L21,7Z"/></svg>
+        `;
+    }
+  }
+}
+
+function updateSubStatus(status) {
+    const el = document.getElementById('chat-sub-status');
+    if (el) el.textContent = status;
 }
 
 function renderDeltaMedia(payload) {

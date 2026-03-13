@@ -1,5 +1,5 @@
 /* =========================================================
-   ECHO CHAT — Service Worker (SAFE UPDATE + PWA CACHE FIX)
+   KRONX — Service Worker (SAFE UPDATE + PWA CACHE FIX)
    Objetivo:
    - Evitar que el cache congele tus cambios de UI
    - Mantener PWA offline-friendly sin romper app.js
@@ -10,7 +10,7 @@
 'use strict';
 
 // 🔁 CAMBIA ESTO cada vez que subas cambios importantes de UI
-const SW_VERSION = 'echo_chat_sw_2026-03-13_vDELTA_FORCE_V5.2_FIX';
+const SW_VERSION = 'kronx_sw_2026-03-13_vDELTA_FORCE_V5.3_KRONX';
 
 // Nombres de caché versionados
 const CACHE_STATIC = `${SW_VERSION}::static`;

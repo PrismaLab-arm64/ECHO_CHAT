@@ -1,7 +1,7 @@
 {
-  "name": "ECHO CHAT",
-  "short_name": "ECHO CHAT",
-  "description": "ECHO CHAT PWA - Secure Communications System",
+  "name": "KRONX",
+  "short_name": "KRONX",
+  "description": "KRONX PWA - Secure Communications System",
   "start_url": "./?v=20260207_01",
   "scope": "./",
   "display": "standalone",

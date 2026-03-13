@@ -166,7 +166,7 @@ function showScreen(screen) {
 function generateUniqueId() {
   const rs = crypto.getRandomValues(new Uint32Array(2));
   const t = Date.now().toString(36);
-  return `ECHOCHAT_${t}${rs[0].toString(36)}`.toUpperCase().substring(0, 16);
+  return `KRONX_${t}${rs[0].toString(36)}`.toUpperCase().substring(0, 16);
 }
 
 function initPeerOptions() {
